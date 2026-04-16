@@ -14,7 +14,7 @@ export type Message = {
 const messages: Message[] = []
 
 export const schema = createSchema({
-  typeDefs: /* GraphQL */ `
+  typeDefs: `
     type Message {
       id: ID!
       user: String!
