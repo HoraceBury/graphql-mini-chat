@@ -40,29 +40,17 @@ async function main() {
     rl.question('', async (content) => {
       if (content.trim()) {
         try {
-          // Use a simple mutation request
-          await new Promise((resolve, reject) => {
-            let done = false
-            client.subscribe(
-              {
-                query: 'mutation($user: String!, $content: String!) { postMessage(user: $user, content: $content) }',
-                variables: { user: username, content },
-              },
-              {
-                next: (data) => {
-                  done = true
-                  resolve(data)
-                },
-                error: (err) => {
-                  done = true
-                  reject(err)
-                },
-                complete: () => {
-                  if (!done) resolve(null)
-                },
-              }
-            )
+          const response = await fetch('http://localhost:4000/graphql', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              query: 'mutation($user: String!, $content: String!) { postMessage(user: $user, content: $content) }',
+              variables: { user: username, content },
+            }),
           })
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+          }
         } catch (err) {
           console.error('Mutation error:', err)
         }
